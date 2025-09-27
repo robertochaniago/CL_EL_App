@@ -439,7 +439,6 @@ public class FirebaseDownloadManager {
 
         // Setup button listeners
         successBinding.btnOpenFolder.setOnClickListener(v -> openDownloadFolder());
-        successBinding.btnInstallAddon.setOnClickListener(v -> installAddon());
         successBinding.btnCloseSuccess.setOnClickListener(v -> {
             // Exit animation for success dialog
             successBinding.getRoot().animate()

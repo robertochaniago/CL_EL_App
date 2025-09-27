@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.el.cmr.nusaindah.R;
@@ -32,6 +33,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
 import com.squareup.picasso.Picasso;
+import com.el.cmr.nusaindah.ui.download.SafDownloadManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +44,8 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     static List<Object> recyclerviewList;
     static Context context;
-    private FirebaseDownloadManager downloadManager;
+    //private FirebaseDownloadManager downloadManager;
+    private SafDownloadManager downloadManager;
     static final int FIRST_ROW = 1;
     static final int SECOND_ROW = 2;
     static final int OTHER_ROW = 3;
@@ -50,7 +53,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public HomeAdapter(Context context, List<Object> recyclerviewList){
         this.context = context;
         this.recyclerviewList = recyclerviewList;
-        this.downloadManager = new FirebaseDownloadManager((Activity) context);
+        this.downloadManager = new SafDownloadManager((AppCompatActivity) context);
     }
 
     @Override
@@ -99,7 +102,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 mainViewHolder.modSingleLayoutBinding.btnDownload.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startFirebaseDownload(mainViewHolder, main);
+                        startSafDownload(mainViewHolder, main);
                     }
                 });
 
@@ -247,20 +250,18 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         return AdSize.getInlineAdaptiveBannerAdSize(adWidth, 260);
     }
 
-    private void startFirebaseDownload(MainViewHolder mainViewHolder, HomeModel main) {
-
+    private void startSafDownload(MainViewHolder mainViewHolder, HomeModel main) {
         // Check if download already in progress
         if (downloadManager.isDownloading()) {
             Toast.makeText(context, "Download already in progress", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Get Firebase Storage path and filename from database
-        String firebaseStoragePath = main.getDownload_url(); //extras.getString("download_url", "");
-        String fileName = main.getName(); //extras.getString("name", "addon_file.mcaddon");
+        String firebaseStoragePath = main.getDownload_url();
+        String fileName = main.getName();
 
-        Log.d("ContentActivity", "Firebase Storage Path: " + firebaseStoragePath);
-        Log.d("ContentActivity", "File Name: " + fileName);
+        Log.d("HomeAdapter", "Firebase Storage Path: " + firebaseStoragePath);
+        Log.d("HomeAdapter", "File Name: " + fileName);
 
         // Validate Firebase Storage path
         if (firebaseStoragePath.isEmpty()) {
@@ -268,43 +269,36 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             return;
         }
 
-        // Start download with modern UI
+        // Start SAF download
         downloadManager.startDownload(firebaseStoragePath, fileName,
-                new FirebaseDownloadManager.DownloadCallback() {
+                new SafDownloadManager.DownloadCallback() {
                     @Override
                     public void onDownloadStart() {
-                        Log.d("ContentActivity", "Download started for: " + fileName);
-                        // Optional: Hide download button temporarily
+                        Log.d("HomeAdapter", "Download started for: " + fileName);
                         mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(false);
                         mainViewHolder.modSingleLayoutBinding.btnDownload.setText("Downloading...");
                     }
 
                     @Override
                     public void onProgress(int progress, long downloaded, long total, String speed) {
-                        // Progress is automatically shown in modern dialog
-                        Log.d("ContentActivity", "Download progress: " + progress + "% - " + speed);
+                        Log.d("HomeAdapter", "Download progress: " + progress + "% - " + speed);
                     }
 
                     @Override
                     public void onSuccess(String filePath) {
-                        Log.d("ContentActivity", "Download completed: " + filePath);
+                        Log.d("HomeAdapter", "Download completed: " + filePath);
 
-                        // Re-enable download button
                         mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(true);
                         mainViewHolder.modSingleLayoutBinding.btnDownload.setText("DOWNLOAD");
 
                         Toast.makeText(context,
                                 "Download completed successfully!", Toast.LENGTH_SHORT).show();
-
-                        // Optional: Analytics tracking
-                        // Analytics.logEvent("addon_downloaded", bundleWith("addon_name", fileName));
                     }
 
                     @Override
                     public void onError(String error) {
-                        Log.e("ContentActivity", "Download error: " + error);
+                        Log.e("HomeAdapter", "Download error: " + error);
 
-                        // Re-enable download button
                         mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(true);
                         mainViewHolder.modSingleLayoutBinding.btnDownload.setText("DOWNLOAD");
 
@@ -314,9 +308,8 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
                     @Override
                     public void onCancelled() {
-                        Log.d("ContentActivity", "Download cancelled by user");
+                        Log.d("HomeAdapter", "Download cancelled by user");
 
-                        // Re-enable download button
                         mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(true);
                         mainViewHolder.modSingleLayoutBinding.btnDownload.setText("DOWNLOAD");
 
@@ -325,4 +318,83 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     }
                 });
     }
+
+//    private void startFirebaseDownload(MainViewHolder mainViewHolder, HomeModel main) {
+//
+//        // Check if download already in progress
+//        if (downloadManager.isDownloading()) {
+//            Toast.makeText(context, "Download already in progress", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        // Get Firebase Storage path and filename from database
+//        String firebaseStoragePath = main.getDownload_url(); //extras.getString("download_url", "");
+//        String fileName = main.getName(); //extras.getString("name", "addon_file.mcaddon");
+//
+//        Log.d("ContentActivity", "Firebase Storage Path: " + firebaseStoragePath);
+//        Log.d("ContentActivity", "File Name: " + fileName);
+//
+//        // Validate Firebase Storage path
+//        if (firebaseStoragePath.isEmpty()) {
+//            Toast.makeText(context, "Invalid download link", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        // Start download with modern UI
+//        downloadManager.startDownload(firebaseStoragePath, fileName,
+//                new FirebaseDownloadManager.DownloadCallback() {
+//                    @Override
+//                    public void onDownloadStart() {
+//                        Log.d("ContentActivity", "Download started for: " + fileName);
+//                        // Optional: Hide download button temporarily
+//                        mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(false);
+//                        mainViewHolder.modSingleLayoutBinding.btnDownload.setText("Downloading...");
+//                    }
+//
+//                    @Override
+//                    public void onProgress(int progress, long downloaded, long total, String speed) {
+//                        // Progress is automatically shown in modern dialog
+//                        Log.d("ContentActivity", "Download progress: " + progress + "% - " + speed);
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(String filePath) {
+//                        Log.d("ContentActivity", "Download completed: " + filePath);
+//
+//                        // Re-enable download button
+//                        mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(true);
+//                        mainViewHolder.modSingleLayoutBinding.btnDownload.setText("DOWNLOAD");
+//
+//                        Toast.makeText(context,
+//                                "Download completed successfully!", Toast.LENGTH_SHORT).show();
+//
+//                        // Optional: Analytics tracking
+//                        // Analytics.logEvent("addon_downloaded", bundleWith("addon_name", fileName));
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//                        Log.e("ContentActivity", "Download error: " + error);
+//
+//                        // Re-enable download button
+//                        mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(true);
+//                        mainViewHolder.modSingleLayoutBinding.btnDownload.setText("DOWNLOAD");
+//
+//                        Toast.makeText(context,
+//                                "Download failed: " + error, Toast.LENGTH_LONG).show();
+//                    }
+//
+//                    @Override
+//                    public void onCancelled() {
+//                        Log.d("ContentActivity", "Download cancelled by user");
+//
+//                        // Re-enable download button
+//                        mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(true);
+//                        mainViewHolder.modSingleLayoutBinding.btnDownload.setText("DOWNLOAD");
+//
+//                        Toast.makeText(context,
+//                                "Download cancelled", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
 }

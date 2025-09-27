@@ -108,7 +108,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="/storage/emulated/0/Download/Italian Brain Rot/"
+                        android:text="/storage/emulated/0/Download/Nusa Indah Addons/"
                         android:textSize="12sp"
                         android:textColor="#666666"
                         android:textIsSelectable="true"
@@ -146,17 +146,17 @@
                 app:iconPadding="8dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_install_addon"
+                android:id="@+id/btn_how_to_use"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:text="Install Now"
+                android:text="How to Use"
                 android:textAllCaps="false"
                 android:backgroundTint="@color/purple_500"
                 app:cornerRadius="16dp"
-                android:drawableLeft="@drawable/ic_install"
+                android:drawableLeft="@drawable/ic_help_tutorial"
                 android:drawableTint="@color/white"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp" />

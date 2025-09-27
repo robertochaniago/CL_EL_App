@@ -62,4 +62,11 @@ dependencies {
 
     implementation 'com.airbnb.android:lottie:6.6.9'  // Untuk animasi modern
     implementation 'androidx.work:work-runtime:2.10.5' // Background download
+
+    // DocumentFile for SAF support
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+
+    // Activity Result APIs (untuk modern permission handling)
+    implementation 'androidx.activity:activity:1.8.2'
+    implementation 'androidx.fragment:fragment:1.6.2'
 }
