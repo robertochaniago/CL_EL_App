@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "576952977337",
+    "project_id": "gamers-zone-23c85",
+    "storage_bucket": "gamers-zone-23c85.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576952977337:android:02fe2d1ac70a364f7f1868",
+        "android_client_info": {
+          "package_name": "com.el.cmr.nusaindah"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3ExlEL_F2FGN_eOx6ia_44feBzoXqA9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576952977337:android:1124d25fbd8bd5907f1868",
+        "android_client_info": {
+          "package_name": "com.el.cmr.parklane"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3ExlEL_F2FGN_eOx6ia_44feBzoXqA9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576952977337:android:e75c2c0f26e182227f1868",
+        "android_client_info": {
+          "package_name": "com.el.cmr.springwood"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3ExlEL_F2FGN_eOx6ia_44feBzoXqA9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

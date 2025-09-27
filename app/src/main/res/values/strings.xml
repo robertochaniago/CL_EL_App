@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Italian Brain Rot</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_map">for MCPE</string>
+    <string name="url_apply_map">https://www.youtube.com/watch?v=IcMdbIQ79Dg</string>
+</resources>
