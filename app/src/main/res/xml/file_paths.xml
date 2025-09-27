@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Downloads folder untuk addon files - Aman untuk semua Android version -->
+    <external-path
+        name="downloads"
+        path="Download/Italian Brain Rot/" />
+</paths>

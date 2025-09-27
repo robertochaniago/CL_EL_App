@@ -8,11 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +23,7 @@ import com.el.cmr.nusaindah.R;
 import com.el.cmr.nusaindah.databinding.ModLayoutBinding;
 import com.el.cmr.nusaindah.databinding.ModSingleLayoutBinding;
 import com.el.cmr.nusaindah.ui.app_dashboard.preview.PreviewActivity;
+import com.el.cmr.nusaindah.ui.download.FirebaseDownloadManager;
 import com.el.cmr.nusaindah.ui.my_detail.ContentActivity;
 import com.el.cmr.nusaindah.ui.my_home.page.model.HomeModel;
 import com.google.android.gms.ads.AdListener;
@@ -39,7 +42,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     static List<Object> recyclerviewList;
     static Context context;
-
+    private FirebaseDownloadManager downloadManager;
     static final int FIRST_ROW = 1;
     static final int SECOND_ROW = 2;
     static final int OTHER_ROW = 3;
@@ -47,6 +50,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public HomeAdapter(Context context, List<Object> recyclerviewList){
         this.context = context;
         this.recyclerviewList = recyclerviewList;
+        this.downloadManager = new FirebaseDownloadManager((Activity) context);
     }
 
     @Override
@@ -95,8 +99,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 mainViewHolder.modSingleLayoutBinding.btnDownload.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(main.getDownload_url()));
-                        context.startActivity(browserIntent);
+                        startFirebaseDownload(mainViewHolder, main);
                     }
                 });
 
@@ -242,5 +245,84 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         int adWidth = (int) (widthPixels / density);
         return AdSize.getInlineAdaptiveBannerAdSize(adWidth, 260);
+    }
+
+    private void startFirebaseDownload(MainViewHolder mainViewHolder, HomeModel main) {
+
+        // Check if download already in progress
+        if (downloadManager.isDownloading()) {
+            Toast.makeText(context, "Download already in progress", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Get Firebase Storage path and filename from database
+        String firebaseStoragePath = main.getDownload_url(); //extras.getString("download_url", "");
+        String fileName = main.getName(); //extras.getString("name", "addon_file.mcaddon");
+
+        Log.d("ContentActivity", "Firebase Storage Path: " + firebaseStoragePath);
+        Log.d("ContentActivity", "File Name: " + fileName);
+
+        // Validate Firebase Storage path
+        if (firebaseStoragePath.isEmpty()) {
+            Toast.makeText(context, "Invalid download link", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Start download with modern UI
+        downloadManager.startDownload(firebaseStoragePath, fileName,
+                new FirebaseDownloadManager.DownloadCallback() {
+                    @Override
+                    public void onDownloadStart() {
+                        Log.d("ContentActivity", "Download started for: " + fileName);
+                        // Optional: Hide download button temporarily
+                        mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(false);
+                        mainViewHolder.modSingleLayoutBinding.btnDownload.setText("Downloading...");
+                    }
+
+                    @Override
+                    public void onProgress(int progress, long downloaded, long total, String speed) {
+                        // Progress is automatically shown in modern dialog
+                        Log.d("ContentActivity", "Download progress: " + progress + "% - " + speed);
+                    }
+
+                    @Override
+                    public void onSuccess(String filePath) {
+                        Log.d("ContentActivity", "Download completed: " + filePath);
+
+                        // Re-enable download button
+                        mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(true);
+                        mainViewHolder.modSingleLayoutBinding.btnDownload.setText("DOWNLOAD");
+
+                        Toast.makeText(context,
+                                "Download completed successfully!", Toast.LENGTH_SHORT).show();
+
+                        // Optional: Analytics tracking
+                        // Analytics.logEvent("addon_downloaded", bundleWith("addon_name", fileName));
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.e("ContentActivity", "Download error: " + error);
+
+                        // Re-enable download button
+                        mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(true);
+                        mainViewHolder.modSingleLayoutBinding.btnDownload.setText("DOWNLOAD");
+
+                        Toast.makeText(context,
+                                "Download failed: " + error, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        Log.d("ContentActivity", "Download cancelled by user");
+
+                        // Re-enable download button
+                        mainViewHolder.modSingleLayoutBinding.btnDownload.setEnabled(true);
+                        mainViewHolder.modSingleLayoutBinding.btnDownload.setText("DOWNLOAD");
+
+                        Toast.makeText(context,
+                                "Download cancelled", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

@@ -59,4 +59,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:34.2.0')
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-storage'
+
+    implementation 'com.airbnb.android:lottie:6.6.9'  // Untuk animasi modern
+    implementation 'androidx.work:work-runtime:2.10.5' // Background download
 }

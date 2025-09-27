@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:com.airbnb.android="http://schemas.android.com/tools"
+    android:layout_margin="24dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="16dp"
+    android:backgroundTint="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:gravity="center">
+
+        <!-- Animated Download Icon -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_download"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp"
+            app:lottie_rawRes="@raw/download_animation"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+        <!-- Download Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Downloading Addon"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A"
+            android:textAlignment="center"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif-medium" />
+
+        <!-- File Name -->
+        <TextView
+            android:id="@+id/tv_file_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ModernFurniture-Addons.zip"
+            android:textSize="16sp"
+            android:textColor="@color/purple_500"
+            android:textAlignment="center"
+            android:layout_marginBottom="24dp"
+            android:alpha="0.8" />
+
+        <!-- Progress Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_progress_container"
+            android:padding="20dp">
+
+            <!-- Progress Bar dengan Gradient -->
+            <ProgressBar
+                android:id="@+id/progress_download"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginBottom="12dp"
+                android:progressDrawable="@drawable/progress_gradient"
+                android:max="100" />
+
+            <!-- Progress Info Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/tv_progress_percentage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0%"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/purple_500" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tv_download_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 MB / 0 MB"
+                    android:textSize="14sp"
+                    android:textColor="#666666" />
+
+            </LinearLayout>
+
+            <!-- Download Speed -->
+            <TextView
+                android:id="@+id/tv_download_speed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Speed: 0 KB/s"
+                android:textSize="12sp"
+                android:textColor="#888888"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <!-- Cancel Button dengan Ripple Effect -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel_download"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel Download"
+            android:textColor="#666666"
+            android:textAllCaps="false"
+            app:strokeColor="#DDDDDD"
+            app:cornerRadius="20dp"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="12dp"
+            app:rippleColor="@color/purple_200" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

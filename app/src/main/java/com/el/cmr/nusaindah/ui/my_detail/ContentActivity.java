@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
@@ -33,6 +34,7 @@ import com.el.cmr.nusaindah.ui.app_dashboard.preview.PreviewAdapter;
 import com.el.cmr.nusaindah.ui.app_dashboard.utils.GPref;
 import com.el.cmr.nusaindah.ui.app_dashboard.utils.ItemDecoration;
 import com.el.cmr.nusaindah.ui.app_home.progress.ads.GoogleAdsLibs;
+import com.el.cmr.nusaindah.ui.download.FirebaseDownloadManager;
 import com.el.cmr.nusaindah.ui.my_home.SQLiteHelper;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdListener;
@@ -64,6 +66,7 @@ public class ContentActivity extends AppCompatActivity {
     private Bundle extras;
     private GPref gPref;
     private InterstitialAd _interstitialAd;
+    private FirebaseDownloadManager downloadManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,7 @@ public class ContentActivity extends AppCompatActivity {
         _interstitialAd = googleAdsLibs.interstitialLoaded();
 
         sqLiteHelper = new SQLiteHelper(getApplicationContext());
+        downloadManager = new FirebaseDownloadManager(this);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
         binding.recyclerviewMore.setLayoutManager(linearLayoutManager);
@@ -173,8 +177,9 @@ public class ContentActivity extends AppCompatActivity {
         binding.btnDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(extras.getString("download_url")));
-                startActivity(browserIntent);
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(extras.getString("download_url")));
+//                startActivity(browserIntent);
+                startFirebaseDownload();
             }
         });
 
@@ -185,6 +190,84 @@ public class ContentActivity extends AppCompatActivity {
                 startActivity(browserIntent);
             }
         });
+    }
+
+    private void startFirebaseDownload() {
+        // Check if download already in progress
+        if (downloadManager.isDownloading()) {
+            Toast.makeText(this, "Download already in progress", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Get Firebase Storage path and filename from database
+        String firebaseStoragePath = extras.getString("download_url", "");
+        String fileName = extras.getString("name", "addon_file.mcaddon");
+
+        Log.d("ContentActivity", "Firebase Storage Path: " + firebaseStoragePath);
+        Log.d("ContentActivity", "File Name: " + fileName);
+
+        // Validate Firebase Storage path
+        if (firebaseStoragePath.isEmpty()) {
+            Toast.makeText(this, "Invalid download link", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Start download with modern UI
+        downloadManager.startDownload(firebaseStoragePath, fileName,
+                new FirebaseDownloadManager.DownloadCallback() {
+                    @Override
+                    public void onDownloadStart() {
+                        Log.d("ContentActivity", "Download started for: " + fileName);
+                        // Optional: Hide download button temporarily
+                        binding.btnDownload.setEnabled(false);
+                        binding.btnDownload.setText("Downloading...");
+                    }
+
+                    @Override
+                    public void onProgress(int progress, long downloaded, long total, String speed) {
+                        // Progress is automatically shown in modern dialog
+                        Log.d("ContentActivity", "Download progress: " + progress + "% - " + speed);
+                    }
+
+                    @Override
+                    public void onSuccess(String filePath) {
+                        Log.d("ContentActivity", "Download completed: " + filePath);
+
+                        // Re-enable download button
+                        binding.btnDownload.setEnabled(true);
+                        binding.btnDownload.setText("DOWNLOAD");
+
+                        Toast.makeText(ContentActivity.this,
+                                "Download completed successfully!", Toast.LENGTH_SHORT).show();
+
+                        // Optional: Analytics tracking
+                        // Analytics.logEvent("addon_downloaded", bundleWith("addon_name", fileName));
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.e("ContentActivity", "Download error: " + error);
+
+                        // Re-enable download button
+                        binding.btnDownload.setEnabled(true);
+                        binding.btnDownload.setText("DOWNLOAD");
+
+                        Toast.makeText(ContentActivity.this,
+                                "Download failed: " + error, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        Log.d("ContentActivity", "Download cancelled by user");
+
+                        // Re-enable download button
+                        binding.btnDownload.setEnabled(true);
+                        binding.btnDownload.setText("DOWNLOAD");
+
+                        Toast.makeText(ContentActivity.this,
+                                "Download cancelled", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void showMore(){
@@ -231,5 +314,14 @@ public class ContentActivity extends AppCompatActivity {
 
         int adWidth = (int) (widthPixels / density);
         return AdSize.getInlineAdaptiveBannerAdSize(adWidth, 260);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // TAMBAHAN: Cleanup download manager
+        if (downloadManager != null) {
+            downloadManager.cleanup();
+        }
     }
 }
