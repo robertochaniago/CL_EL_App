@@ -183,13 +183,13 @@ public class ContentActivity extends AppCompatActivity {
             }
         });
 
-        binding.btnYoutube.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.url_apply_map)));
-                startActivity(browserIntent);
-            }
-        });
+//        binding.btnYoutube.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.url_apply_map)));
+//                startActivity(browserIntent);
+//            }
+//        });
     }
 
     private void startSafDownload() {

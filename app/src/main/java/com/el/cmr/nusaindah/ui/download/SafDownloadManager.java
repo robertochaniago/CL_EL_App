@@ -63,6 +63,8 @@ public class SafDownloadManager implements StorageAccessManager.StorageAccessLis
     private long downloadedBytes = 0;
     private long startTime;
 
+    public static final String D_FOLDER_NAME = "Minecraft Addons";
+
     public interface DownloadCallback {
         void onDownloadStart();
         void onProgress(int progress, long downloaded, long total, String speed);
@@ -398,7 +400,7 @@ public class SafDownloadManager implements StorageAccessManager.StorageAccessLis
 
         // Set file information
         successBinding.tvSuccessFileName.setText(this.fileName);
-        successBinding.tvFilePath.setText(storageManager.getSelectedFolderInfo() + "/" + fileName);
+        successBinding.tvFilePath.setText(storageManager.getSelectedFolderInfo() + "/" + D_FOLDER_NAME + "/" + fileName);
 
         // Setup button listeners
         successBinding.btnOpenFolder.setOnClickListener(v -> openDownloadFolder());
@@ -434,7 +436,7 @@ public class SafDownloadManager implements StorageAccessManager.StorageAccessLis
      */
     private void openDownloadFolder() {
         // Step 1: Show folder information first (always safe)
-        String folderInfo = storageManager.getSelectedFolderInfo();
+        String folderInfo = storageManager.getSelectedFolderInfo() + "/" + D_FOLDER_NAME;
         Toast.makeText(activity, "File saved to: " + folderInfo, Toast.LENGTH_LONG).show();
 
         // Step 2: Try to open file manager (safe fallback)
@@ -463,11 +465,10 @@ public class SafDownloadManager implements StorageAccessManager.StorageAccessLis
      */
     private void showDetailedFolderInfo() {
         String folderPath = storageManager.getSelectedFolderInfo();
-        String appFolderName = "Minecraft Addons";
 
         String message = "📁 Your file has been saved to:\n\n" +
                 "📂 Folder: " + folderPath + "\n" +
-                "📂 Subfolder: " + appFolderName + "\n" +
+                "📂 Subfolder: " + D_FOLDER_NAME + "\n" +
                 "📄 File: " + fileName + "\n\n" +
                 "💡 Open your file manager and navigate to this location to find your downloaded addon.";
 
@@ -478,7 +479,7 @@ public class SafDownloadManager implements StorageAccessManager.StorageAccessLis
                     android.content.ClipboardManager clipboard =
                             (android.content.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
                     android.content.ClipData clip = android.content.ClipData.newPlainText("Folder Path",
-                            folderPath + "/" + appFolderName);
+                            folderPath + "/" + D_FOLDER_NAME);
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(activity, "📋 Path copied to clipboard", Toast.LENGTH_SHORT).show();
                 })
@@ -624,7 +625,7 @@ public class SafDownloadManager implements StorageAccessManager.StorageAccessLis
      * Generate specific instructions based on file type
      */
     private String generateInstructionsForFileType(String fileType, String fileName) {
-        String basePath = "📂 " + storageManager.getSelectedFolderInfo() + "/Nusa Indah Addons";
+        String basePath = "📂 " + storageManager.getSelectedFolderInfo() + "/" + D_FOLDER_NAME;
         String commonSteps = "1️⃣ Open your File Manager\n" +
                 "2️⃣ Navigate to: " + basePath + "\n" +
                 "3️⃣ Find your file: 📄 " + fileName + "\n\n";

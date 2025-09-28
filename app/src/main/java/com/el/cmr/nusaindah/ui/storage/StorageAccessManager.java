@@ -1,5 +1,7 @@
 package com.el.cmr.nusaindah.ui.storage;
 
+import static com.el.cmr.nusaindah.ui.download.SafDownloadManager.D_FOLDER_NAME;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -213,7 +215,7 @@ public class StorageAccessManager {
      * Get or create app subfolder
      */
     private DocumentFile getOrCreateAppFolder(DocumentFile parentFolder) {
-        String appFolderName = "MCPE Addons";
+        String appFolderName = D_FOLDER_NAME;
 
         DocumentFile appFolder = parentFolder.findFile(appFolderName);
         if (appFolder == null || !appFolder.exists()) {

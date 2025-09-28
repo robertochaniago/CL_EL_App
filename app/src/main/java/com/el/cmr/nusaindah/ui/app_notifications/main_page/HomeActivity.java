@@ -26,7 +26,6 @@ public class HomeActivity extends AppCompatActivity {
     private SQLiteHelper sqLiteHelper;
     private List<Object> dataListHome = new ArrayList<>();
     private RecyclerView.Adapter<RecyclerView.ViewHolder> homeAdapter;
-
     private GoogleAdsLibs googleAdsLibs;
 
     @Override
